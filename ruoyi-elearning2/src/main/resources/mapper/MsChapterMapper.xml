@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mashang.elearning.mapper.MsChapterMapper">
+
+    <resultMap id="listMap" type="com.mashang.elearning.domain.Vo.MsChapterLessonsVo">
+        <id property="chapterId" column="chapter_id"></id>
+        <result property="courseId" column="course_id"></result>
+        <result property="chapterName" column="chapter_name"></result>
+        <result property="chapterSort" column="chapter_sort"></result>
+        <collection property="lessons" ofType="com.mashang.elearning.domain.Vo.MsLessonsVo">
+            <id property="lessonId" column="lesson_id"></id>
+            <result property="lessonName" column="lesson_name"></result>
+            <result property="lessonSort" column="lesson_sort"></result>
+        </collection>
+    </resultMap>
+    <select id="list" resultMap="listMap">
+        SELECT
+            t1.chapter_id,
+            t1.chapter_name,
+            t1.chapter_sort,
+            t1.course_id,
+            t2.lesson_id,
+            t2.lesson_name,
+            t2.lesson_sort
+        FROM ms_chapter t1
+                 LEFT JOIN ms_lesson t2
+                           on t1.chapter_id = t2.chapter_id
+        where t1.del_flag != '2'
+          AND (t2.del_flag != '2' or t2.del_flag is NULL)
+          AND t1.course_id = #{courseId}
+        ORDER BY t1.chapter_sort,t2.lesson_sort
+
+    </select>
+
+</mapper>

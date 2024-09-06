@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mashang.elearning.mapper.MsHomeworkSubmMapper">
+
+    <resultMap id="listMap" type="com.mashang.elearning.domain.Vo.MshomeworkSubmVo">
+        <id property= "userId" column="user_id"></id>
+        <result property="nickName" column="nick_name"></result>
+        <collection property="homeworks" ofType="com.mashang.elearning.domain.Vo.MsHomeworkSubmDtlVo">
+            <id property="homeworkSubmId" column="homework_subm_id"></id>
+            <result property="pass" column="pass"></result>
+            <result property="comment" column="comment"></result>
+            <result property="homeworkName" column="homework_name"></result>
+            <result property="homeworkUrl" column="homework_url"></result>
+        </collection>
+    </resultMap>
+    <select id="list" resultMap="listMap">
+        SELECT
+            t1.user_id,
+            t1.nick_name,
+            t2.homework_subm_id,
+            t2.homework_url,
+            t2.pass,
+            t2.`comment`,
+            t2.homework_name
+        FROM sys_user t1
+                 LEFT JOIN ms_homework_subm t2
+                           ON t1.user_id = t2.student_id
+                               AND t2.del_flag != '2'
+                               AND t2.lesson_id = #{lessonId}
+        WHERE t1.del_flag != '2'
+          AND t1.class_id = #{classId}
+        ORDER BY t2.create_by DESC
+
+    </select>
+
+</mapper>

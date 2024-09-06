@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mashang.elearning.mapper.MsCourseMapper">
+
+    <sql id="listVo">
+        SELECT
+            t1.course_id,
+            t1.course_name,
+            t1.course_cover,
+            t3.nick_name,
+            t2.class_name,
+            t1.teacher_id,
+            t1.class_id,
+            t1.remark
+        from ms_course t1
+                 LEFT JOIN ms_class t2
+                           on t1.class_id = t2.class_id
+                 LEFT JOIN sys_user t3
+                           on t1.teacher_id = t3.user_id
+    </sql>
+
+    <resultMap id="pageMap" type ="com.mashang.elearning.domain.Vo.MsCoursePageVo">
+        <id property="courseId" column="course_id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseCover" column="course_cover"></result>
+        <result property="classId" column="class_id"></result>
+        <result property="teacherId" column="teacher_id"></result>
+        <result property="remark" column="remark"></result>
+        <result property="className" column="class_name"></result>
+        <result property="tearcharName" column="nick_name"></result>
+    </resultMap>
+    <select id="page" resultMap="pageMap">
+            <include refid="listVo"></include>
+            ${ew.customSqlSegment}
+    </select>
+
+    <resultMap id="getDtlByIdMap" type="com.mashang.elearning.domain.Vo.MsCourseDtlVo">
+        <id property="courseId" column="course_id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseCover" column="course_cover"></result>
+        <result property="classId" column="class_id"></result>
+        <result property="teacherId" column="teacher_id"></result>
+        <result property="remark" column="remark"></result>
+        <result property="className" column="class_name"></result>
+        <result property="teacherName" column="nick_name"></result>
+    </resultMap>
+    <select id="getDtlById" resultMap="getDtlByIdMap">
+        <include refid="listVo"></include>
+        where t1.course_id = #{courseId}
+    </select>
+
+    <resultMap id="stuPageMap" type ="com.mashang.elearning.domain.Vo.stu.StuCoursePageVo">
+        <id property="courseId" column="course_id"></id>
+        <result property="courseName" column="course_name"></result>
+        <result property="courseCover" column="course_cover"></result>
+<!--        <result property="classId" column="class_id"></result>-->
+        <result property="teacherId" column="teacher_id"></result>
+        <result property="remark" column="remark"></result>
+<!--        <result property="className" column="class_name"></result>-->
+        <result property="tearcharName" column="nick_name"></result>
+    </resultMap>
+    <select id="stuPage" resultMap="stuPageMap">
+        SELECT
+            t3.nick_name,
+            t2.course_id,
+            t2.course_name,
+            t2.course_cover,
+            t2.teacher_id,
+        t2.remark
+        FROM sys_user t1
+                 LEFT JOIN ms_course t2
+                           on t1.class_id = t2.class_id
+                 LEFT JOIN sys_user t3
+                           on t3.user_id = t2.teacher_id
+        ${ew.customSqlSegment}
+    </select>
+
+</mapper>
